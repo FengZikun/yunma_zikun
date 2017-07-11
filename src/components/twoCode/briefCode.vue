@@ -246,7 +246,7 @@
         $(event.target).parent().parent().addClass('modHid');
       },
       showKuang(event){
-        this.frameSrc='http://project.ym-b.top/cloud_code/wx/'+$(event.target).attr('data');
+        this.frameSrc='http://project.ym-b.top/wx/'+$(event.target).attr('data');
         $('.modelBg').removeClass('modHid');
       }
     },

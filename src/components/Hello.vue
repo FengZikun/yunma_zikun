@@ -26,19 +26,19 @@
           <li class='top_nav li_03' @click='changeColor'><router-link to="/goods/progaikuang">产品</router-link></li>
           <li class='top_nav li_02' @click='changeColor'><router-link to="/twoCode/gaikuang">二维码</router-link></li>
           <ul class="personal1 top_nav">
-          <li>
-            用户<span class='xiajiantou'></span>
-          </li>
-          <li class="change_color" style="margin-top:6px">
-            <a href="javascript:void(0)" @click="toWeiQing('http://www.ym-b.top/web/index.php?c=mc&a=fans&')"><span>粉丝管理</span></a>
-          </li>
-          <li class="change_color">
-            <a href="javascript:void(0)" @click="toWeiQing('http://www.ym-b.top/web/index.php?c=mc&a=member&')"><span>会员管理</span></a>
-          </li>
-        </ul>
-          <li class='top_nav li_04' @click='changeColor'><a href="javascript:void(0);" @click="toWeiQing1('http://www.ym-b.top')">公众号</a></li>
-          <li class='top_nav li_05' @click='changeColor'><router-link to="/union/coupon">企业联盟</router-link></li>
-          <li class='top_nav li_06' @click='changeColor'><a href="javascript:void(0);" @click="toWeiQing('http://www.ym-b.top/web/index.php?c=platform&a=cover&eid=39')">商城</a></li>
+            <li>
+              用户<span class='xiajiantou'></span>
+            </li>
+            <li class="change_color" style="margin-top:6px">
+              <a href="javascript:void(0)" @click="WxGzhInfo('http://www.ym-b.top/web/index.php?c=mc&a=fans&',0)"><span>粉丝管理</span></a>
+            </li>
+            <li class="change_color">
+              <a href="javascript:void(0)" @click="WxGzhInfo('http://www.ym-b.top/web/index.php?c=mc&a=member&',0)"><span>会员管理</span></a>
+            </li>
+          </ul>
+          <li class='top_nav li_04' @click='changeColor'><a href="javascript:void(0);" @click="WxGzhInfo('http://www.ym-b.top',1)">公众号</a></li>
+          <li class='top_nav li_05' @click='changeColor'><router-link to="/union">企业联盟</router-link></li>
+          <li class='top_nav li_06' @click='changeColor'><a href="javascript:void(0);" @click="WxGzhInfo('http://www.ym-b.top/web/index.php?c=platform&a=cover&eid=39',0)">商城</a></li>
         </ul>
       </div>
       <div class='username'>
@@ -67,7 +67,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-/*@import '../assets/css/common.css'*/
+  /*@import '../assets/css/common.css'*/
   a:hover{
     text-decoration: none;
   }
@@ -80,7 +80,7 @@
       border-radius: 0;
     }*/
 
-  /*栅格系统去除padding*/
+    /*栅格系统去除padding*/
   /*.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
     padding-right: 0;
     padding-left: 0;
@@ -279,7 +279,7 @@
   .change_color{
     background-color: #fff;
   }
-    .change_color:hover{
+  .change_color:hover{
     background: rgb(239, 243, 245)
 
   }
@@ -318,7 +318,7 @@
   }
 </style>
 <script>
-import common from '../common.js'
+  import common from '../common.js'
   export default {
     name: 'hello',
     data () {
@@ -360,6 +360,32 @@ import common from '../common.js'
       toWeiQing1:function(url){
         document.cookie=`_755url=;domain=ym-b.top;path=/web`;
         window.open(url,'_blank')
+      },
+      WxGzhInfo:function(url,num){
+        var self=this;
+        $.ajax({
+          url: 'http://project.ym-b.top/cloud_code/GET/wxConfig/getWxGzhInfo.do',
+          type:'get',
+          data: {vendorId:self.vendorId},
+          dataType: 'json',
+          success: function (res) {
+            if(res.status == "-1"){
+              alert('请先绑定公众号');
+              router.push('/enterprise/en_public');
+            }
+            else{
+              if(num==0){
+                self.toWeiQing(url);
+              }
+              else if(num==1){
+                self.toWeiQing(url);
+              }
+            }
+          },
+          error:function(res){
+            console.log(res);
+          }
+        });
       },
     },
     created:function(){

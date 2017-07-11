@@ -6,7 +6,7 @@
                 <span class="icon1"></span>
                 此功能针对于已开通公众号企业，输入信息可以绑定公众号进行操作等服务
               </p>
-            <input type="button" name="" value="+新增公众号" class="addpublic" @click='toWeiQing1("http://www.ym-b.top")'>
+            <input type="button" name="" value="+新增公众号" class="addpublic" @click='toWeiQing1("http://www.ym-b.top/web/index.php?c=account&a=post-step&step=2")'>
           </div>
           <div v-if='addmessage'>
               <div class='message-box3 dubBtn' @click='toWeiQing("http://www.ym-b.top/web/index.php?c=account&a=manage&")' style="margin-left:0">
@@ -278,7 +278,7 @@
           dataType: 'json',
           success: function (res) {
             console.log(res,parseInt(self.vendorId)); 
-            if(JSON.stringify(res) == "{}"){
+            if(res.status == "-1"){
               self.addmessage1=true;
               return
             }

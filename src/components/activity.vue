@@ -326,7 +326,7 @@
       nextPage:common.nextPage,
       // 预览
       showKuang(event){
-        this.frameSrc='http://project.ym-b.top/cloud_code/wx/'+$(event.target).attr('data-url');
+        this.frameSrc='http://project.ym-b.top/wx/'+$(event.target).attr('data-url');
         $('.modelBg').removeClass('modHid');
       },
       // 隐藏预览

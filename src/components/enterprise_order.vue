@@ -58,7 +58,7 @@
               <span class="pro-li-span">{{item.productCount}}</span>
               <span class="pro-li-span">{{item.createDate}}</span>
               <span class="pro-li-span">{{item.status}}</span>
-              <span class="pro-li-span last"><a href="javascript:void(0)" v-bind:data-id='item.orderId' @click='toDetail'>详情</a>、<a href="javascript:void(0)" v-bind:data-id='item.orderId' @click='mengban'>删除订单、</a><a href="javascript:void(0)" v-bind:data-id='item.orderId' @click='two'>生成二维码</a>、<router-link to='/twoCode/briefCode'>扫码页模板</router-link>、<a href="javascript:void(0)">扫码活动管理</a></span>
+              <span class="pro-li-span last"><a href="javascript:void(0)" v-bind:data-id='item.orderId' @click='toDetail'>详情</a>、<a href="javascript:void(0)" v-bind:data-id='item.orderId' @click='mengban'>删除订单、</a><a href="javascript:void(0)" v-bind:data-id='item.orderId' @click='two'>生成二维码</a>、<router-link to='/twoCode/briefCode'>扫码页模板</router-link>、<a href="javascript:void(0)">扫码活动管理</a>、<a href="javascript:void(0)" v-bind:data-id='item.orderId' @click='confirmDownLoad'>导出二维码</a></span>
 
             </li>
           </ul>
@@ -78,6 +78,11 @@
 
           </ul>
         </div>
+      </div>
+    </div>
+      <div class="modelBg modHid" id='info'>
+      <div class="modelContent">
+        正在加载请等待
       </div>
     </div>
   </div>
@@ -167,6 +172,29 @@
   }
   .tishi{
     text-align: center;
+  }
+  .modelBg{
+   position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.6);
+  }
+  .modelContent{
+    width: 420px;
+    height: 250px;
+    background: #fff;
+    position: relative;
+    top: 50%;
+    margin: auto;
+    margin-top: -125px;
+    text-align: center;
+    line-height: 250px;
+  }
+    .modHid {
+    display: none;
   }
 </style>
 <script>
@@ -259,6 +287,7 @@
 
       //生成二维码
       two:function(){
+        $('#info').removeClass('modHid')
         var self=this;
         var id=$(event.target).attr('data-id');
         var url='http://120.77.149.115/cloud_code/POST/securityCode/createSecurityCode.do';
@@ -267,6 +296,7 @@
           orderId:id
         };
         var success=function(res){
+          $('#info').addClass('modHid')
           if(res.errorCode===0){
             self.showWarn=true;
             self.warnText='已成功生成二维码'
@@ -276,6 +306,54 @@
           }
         };
         common.Ajax(url,type,data,success)
+      },
+      // 下载二维码信息
+      confirmDownLoad:function(){
+        var self=this;
+        var id=$(event.target).attr('data-id');
+        $.ajax({
+          url:'http://project.ym-b.top/cloud_code/GET/securityCode/securityCodeExportCountWarn.do',
+          type:'post',
+          data:{orderId:id},
+          datatype:'json',
+          success:function(res){
+            if(res.code==-1){
+              var r=confirm("该订单导出二维码次数超过1次，可能在流通过程中出现重复!是否导出二维码");
+              if(r==true){
+                self.downLoad(id);
+                return
+              }
+            }
+            else if(res.code==0){
+              var r=confirm("该订单未导出二维码!请确认是否导出二维码!");
+              if(r==true){
+                self.downLoad(id);
+                return
+              }
+            }
+            else{
+              alert('导出失败')
+            }
+          }
+        })
+      },
+      downLoad:function(id){
+        var downloadURL = "http://project.ym-b.top/cloud_code/POST/securityCode/exportVendorSecurityCode.do";  
+        var form = $("<form>");   //定义一个form表单  
+        form.attr('style','display:none');   //在form表单中添加查询参数  
+        form.attr('target','');  
+        form.attr('method','post');  
+        form.attr('action',downloadURL);  
+                              
+        var input1 = $('<input>');   
+        input1.attr('type','hidden');   
+        input1.attr('name','orderId');   
+        input1.attr('value',id);    
+          
+        $('body').append(form);  //将表单放置在web中  
+        form.append(input1);   //将查询参数控件提交到表单上  
+        form.submit();   //表单提交  
+        alert('正在下载请勿关闭窗口');
       },
       //获取页数
       getPage:common.getPage,

@@ -109,7 +109,7 @@
 						（模板功能：公司官网、防伪、溯源、红包）
 					</div>
 					<div>
-						<span style="margin-left:150px;" class="editModel" @click="showKuang('modelS')">预览/编辑</span>
+						<span v-if='modelSelected' style="margin-left:150px;" class="editModel" @click="showKuang($event,'modelS')" v-bind:data-url='modelSelected.urlName'>预览/编辑</span>
 					</div>
 				</div>
 				<div class="messagebox">
@@ -132,7 +132,7 @@
 				<div class="phoneTitle"></div>
 				<img src="../../assets/img/icon_cha3.png" class="cha3" @click="hideKuang">
 
-				<iframe v-if='modelSelected!=null' v-bind:src="modelSelected.htmlUri" width="349px" height="663px"></iframe>
+				<iframe v-if='modelSelected!=null' v-bind:src='frameSrc' width="349px" height="663px"></iframe>
 				
 				<div class="tipOut">
 					<div class="tipArrow "></div>
@@ -153,19 +153,19 @@
 						<span class="editErea">微商城:</span>
 						<input type="radio" name="shop"  checked="true">&nbsp;显示&nbsp;&nbsp;
 						<input type="radio" name="shop" v-on:click="modelSelected.weShop=false">&nbsp;不显示
-						<i class="editIcon" v-on:click='showKuang("shop")'></i>
+						<i class="editIcon" v-on:click='showKuang($event,"shop")'></i>
 					</p>
 					<p>
 						<span class="editErea">公司官网:</span>
 						<input type="radio" name="keyOne" checked="true">&nbsp;显示&nbsp;&nbsp;
 						<input type="radio" name="keyOne" @click="modelSelected.vendorHttp='false'">&nbsp;不显示
-						<i class="editIcon" v-on:click='showKuang("guan")'></i>
+						<i class="editIcon" v-on:click='showKuang($event,"guan")'></i>
 					</p>
 					<p>
 						<span class="editErea">产品介绍:</span>
 						<input type="radio" name="keyTwo" checked="true">&nbsp;显示&nbsp;&nbsp;
 						<input type="radio" name="keyTwo" @click="modelSelected.productInfo=false">&nbsp;不显示
-						<i class="editIcon" v-on:click="showKuang('chan')"></i>
+						<i class="editIcon" v-on:click="showKuang($event,'chan')"></i>
 					</p>
 					<p>
 						<span class="editErea">领取红包:</span>
@@ -223,6 +223,7 @@
         		myTime:1,
         		showWarn:null,
 				warnText:null,
+				frameSrc:''
         	}
         },
         props:['datas'],
@@ -329,12 +330,14 @@
 			hideKuang(event){
 				$(event.target).parent().parent().addClass('modHid');
 			},
-			showKuang(name){
+			showKuang(event,name){
+				console.log(event.target,name);
 				if(name==="guan"){
 					$("[defName=guan]").removeClass('modHid');
 					return;
 				}
 				if(name==="modelS"){
+					this.frameSrc='http://project.ym-b.top/wx/'+$(event.target).attr('data-url');
 					$("[defName=modelS]").removeClass('modHid');
 					return;
 				}

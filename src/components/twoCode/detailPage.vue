@@ -169,7 +169,7 @@
         <!-- 内码真 -->
         <div class="info innerCodeTure hideMod">
             <p style="color: #eca100;font-family:'微软雅黑';height: 15vw;line-height: 7.5vw;font-size: 4vw;font-weight: bold;">
-            <img style="width: 15vw;height: 15vw;vertical-align:middle;float: left;" src="img/icon/icon_suyuan1.png"/>&nbsp;&nbsp;
+            <img style="width: 12vw;height: 12vw;vertical-align:middle;float: left;" src="img/icon/icon_suyuan1.png"/>&nbsp;&nbsp;
             该产品为{{this.phoneTitle}}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请放心使用！
             </p>
         </div>
@@ -514,15 +514,15 @@ import router from '../../router.js'
         /*内码真图片*/
         .innerCodeTure{
             position: absolute;
-            left: 28vw;
-            top: 33vh;
+            left: 26vw;
+            top: 27vh;
         }
 
         /*内码假图片*/
         .innerCodeFalse img {
             width: 76vw;
             position: absolute;
-            left: 28vw;
+            left: 15vw;
             top: 28vh;
         }
 
@@ -593,9 +593,8 @@ ${$('#baba').html()}
                 this.urlOne='';
                 this.urlTwo='';
                 this.urlThree='';
-                // this.getLocation();
-                this.wechatHome();
-            },
+                this.getSign();
+                },
             bindEvents: function () {
                 var self = this;
                 $('.tap-btn').on('click', function () {
@@ -666,40 +665,73 @@ ${$('#baba').html()}
                     return
                 }
             },
-            // // 获取地理位置
-            // getLocation:function () {
-            //     var self=this;
-            //   if (navigator.geolocation){
-            //     navigator.geolocation.getCurrentPosition(function(){
-            //         self.latitude=position.coords.latitude;
-            //     self.longitude=position.coords.longitude;
-            //     self.wechatHome();
-            //     });
-            //     }
-            //   else{
-            //     alert('无法获取地理位置')
-            //     }
-            // },
-            // showPosition:function (position) {
-            //     var self=this;
-            //     console.log(self);
-            //     self.latitude=position.coords.latitude;
-            //     self.longitude=position.coords.longitude;
-            // },
+            // 获取js-sdk地址签名
+            getSign: function () {
+                var _this = this;
+                if (window.frames.length != parent.frames.length){ 
+                    $('.content').siblings('div').hide();
+                    _this.pushfunc({
+                        spree:0,
+                        securityAndTraceability:0,
+                        weShop:'true',
+                        vendorHttp:'true',
+                        productInfo:'true',
+                        getRedEnv:0
+                      });
+                        return  
+                }
+                $.ajax({
+                    url: "/cloud_code/POST/weChat/signature.do",
+                    data: {url: window.location.href},
+                    type: 'GET',
+                    dataType: 'json',//here
+                    success: function (res) {
+                        _this.wxConfig(res)
+                    }
+                });
+            },
+            // 设置js-sdk配置
+            wxConfig: function (params) {
+                var _this = this;
+                wx.config({
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: params.appId, // 必填，公众号的唯一标识
+                    timestamp: params.timestamp, // 必填，生成签名的时间戳
+                    nonceStr: params.noncestr, // 必填，生成签名的随机串
+                    signature: params.signature,// 必填，签名，见附录1
+                    jsApiList: ['getLocation'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                });
+                wx.ready(function () {
+                    wx.getLocation({
+                        type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+                        success: function (res) {
+                            _this.latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                            _this.longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                            _this.wechatHome();
+                        },
+                        cancel: function () {
+                            _this.latitude = ''; // 纬度，浮点数，范围为90 ~ -90
+                            _this.longitude = ''; // 经度，浮点数，范围为180 ~ -180。
+                            _this.wechatHome();
+                        },
+                        fail: function () {
+                            _this.latitude = ''; // 纬度，浮点数，范围为90 ~ -90
+                            _this.longitude = ''; // 经度，浮点数，范围为180 ~ -180。
+                            _this.wechatHome();
+                        }
+                    });
+                });
+                // 防止出错时阻塞
+                wx.error(function (res) {
+                    alert('无法获取位置信息');
+                    _this.latitude = ''; // 纬度，浮点数，范围为90 ~ -90
+                    _this.longitude = ''; // 经度，浮点数，范围为180 ~ -180。
+                    _this.wechatHome();
+                });
+            },
             // 获取基本信息
             wechatHome: function () {
                 var self = this;
-                if (window.frames.length != parent.frames.length){ 
-                self.pushfunc({
-                    spree:0,
-                    securityAndTraceability:0,
-                    weShop:'true',
-                    vendorHttp:'true',
-                    productInfo:'true',
-                    getRedEnv:0
-                  });
-                    return  
-                }  
                 $.ajax({
                     url: 'http://project.ym-b.top/cloud_code/POST/weChat/antiFakeCodeHome.do',
                     data: {
@@ -714,7 +746,8 @@ ${$('#baba').html()}
                             self.render(res);
                     },
                     error: function (err) {
-                        alert(JSON.stringify(err));
+                        console.log(JSON.stringify(err));
+                        self.render(res);
                     }
                 })
             },
