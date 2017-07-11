@@ -61,7 +61,7 @@
                 <li v-if='appList!=""' v-for='app in appList'>
                   <a href="javascript:void(0)"><p @click='toWeiQing(app.weqUrl)' style="color:#fff;font-size:16px;">{{app.appName}}</p></a>
                 </li>
-                <li @click="toWeiQing('http://www.ym-b.top/web/index.php?c=profile&a=module&')" style="color:#fff;font-size:16px;" >
+                <li @click="WxGzhInfo('http://www.ym-b.top/web/index.php?c=profile&a=module&')" style="color:#fff;font-size:16px;" >
                 <a href="javascript:void(0)">更多应用</a>
                 </li>
               </ul>
@@ -375,6 +375,7 @@
 </style>
 <!--<script src='../assets/js/china.js'></script>-->
 <script>
+  import router from '../router'
   export default{
     data(){
       return {
@@ -498,6 +499,27 @@
       toWeiQing:function(url){
         document.cookie=`_755url=.${url.slice(url.indexOf('web/')+4)};domain=ym-b.top;path=/web`;
         window.open(url,'_blank')
+      },
+      WxGzhInfo:function(url){
+        var self=this;
+        $.ajax({
+          url: 'http://project.ym-b.top/cloud_code/GET/wxConfig/getWxGzhInfo.do',
+          type:'get',
+          data: {vendorId:self.vendorId},
+          dataType: 'json',
+          success: function (res) {
+            if(res.status == "-1"){
+              alert('请先绑定公众号');
+              router.push('/enterprise/en_public');
+            }
+            else{
+              self.toWeiQing(url);
+            }
+          },
+          error:function(res){
+            console.log(res);
+          }
+        });
       },
     },
     created:function(){

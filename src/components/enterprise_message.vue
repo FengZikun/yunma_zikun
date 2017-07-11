@@ -49,7 +49,7 @@
             </div>
             <div class='message-box'>
               <span class='textname'>联系地址：</span>
-              <select class='textvalue' name="vendorAddress" id="select2" style='width:97px;padding-left: 10px;' v-model="vendorAddress[0]">
+              <select class='textvalue' name="vendorAddress" id="select2" style='width:97px;padding-left: 10px;' v-model="vendorAddress">
                   <option value="0">请选择</option>
                   <option value="1">广东省</option>
                   <option value="2">河北省</option>
@@ -67,7 +67,7 @@
                   <option value="14">福建省</option>
                   <option value="15">黑龙江省</option>
               </select>
-              <select class='textvalue' name="" id="select3" style='width:97px;padding-left: 10px;' v-model="vendorAddress[1]">
+              <select class='textvalue' name="" id="select3" style='width:97px;padding-left: 10px;' v-model="vendorAddress">
                   <option value="0">请选择</option>
                   <option value="1">广州市</option>
                   <option value="2">深圳市</option>
@@ -85,7 +85,7 @@
                   <option value="14">中山市</option>
                   <option value="15">潮州市</option>
               </select>
-              <select class='textvalue' name="" id="select4" style='width:97px;padding-left: 10px;' v-model="vendorAddress[2]">
+              <select class='textvalue' name="" id="select4" style='width:97px;padding-left: 10px;' v-model="vendorAddress">
                   <option value="0">请选择</option>
                   <option value="1">罗湖区</option>
                   <option value="2">福田区</option>
@@ -94,7 +94,7 @@
                   <option value="5">宝安区</option>
                   <option value="6">龙岗区</option>
               </select><br>
-              <textarea name="" id="textarea" cols="30" rows="5" placeholder='详细地址' v-model="vendorAddress[3]"></textarea>
+              <textarea name="" id="textarea" cols="30" rows="5" placeholder='详细地址' v-model="vendorAddress"></textarea>
               <div class='message-box'>
                 <span class='textname'>官网地址：</span>
                 <input class='textvalue' style='width:150px;padding-left: 10px;' type="text" v-model="link" name="link"> 
@@ -273,7 +273,7 @@ label{
         customPhone:'',    //手机号码
         vendorWeixin:'',   //微信绑定
         customTel:'',   //客服电话
-        vendorAddress:['0','0','0',''],  //联系地址
+        vendorAddress:'',  //联系地址
         link:'',     //官网地址
         officialAccounts:'',//关联公众号
         showMB:false,
